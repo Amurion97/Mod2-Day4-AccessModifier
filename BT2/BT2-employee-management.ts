@@ -30,36 +30,7 @@ class EmployeeManager {
         this.employeeList.splice(index, 1);
     }
 
-    static getIndexToEdit(): number {
-        let index: number = -1;
-        const question1 = () => {
-            return new Promise((resolve, reject) => {
-                rl.question('Enter user ID (index) to change: ', (answer: string) => {
-                    // console.log(`Thank you for your valuable feedback: ${answer}`)
-                    index = Number(answer);
-                    resolve(Promise);
-                })
-            })
-        }
-        const main = async () => {
-            await question1();
-        }
-        main();
-        return index;
-    }
-
-
     static editEmployee(index: number) {
-        // let index:number;
-        // const question1 = () => {
-        //     return new Promise((resolve, reject) => {
-        //         rl.question('Enter user ID (index) to change: ', (answer: string) => {
-        //             // console.log(`Thank you for your valuable feedback: ${answer}`)
-        //             index = Number(answer);
-        //             resolve(Promise);
-        //         })
-        //     })
-        // }
         const question2 = () => {
             return new Promise((resolve, reject) => {
                 rl.question('Enter new surname: ', (answer: string) => {
@@ -128,10 +99,11 @@ class EmployeeManager {
         rl.question(`${"-".repeat(20)}
         Menu:
         1. Show all employees
-        2. Add an employee
-        3. Edit an employee
-        4. Remove an employee
-        5. Quit
+        2. Show details of an employee
+        3. Add an employee
+        4. Edit an employee
+        5. Remove an employee
+        6. Quit
         Your option: `, (answer: string) => {
             console.log("=".repeat(20))
             switch (answer) {
@@ -140,10 +112,33 @@ class EmployeeManager {
                     this.showMenu();
                     break;
                 case "2":
+                    const questionShow = () => {
+                        return new Promise((resolve, reject) => {
+                            rl.question('Enter user ID (index) to show detail: ', (answer: string) => {
+                                // console.log(`Thank you for your valuable feedback: ${answer}`)
+                                index = Number(answer);
+                                resolve(Promise);
+                            })
+                        })
+                    }
+                    const showEmployee = async () => {
+                        await questionShow();
+                        // console.log(index);
+                        if (isNaN(index) || index < 0 || index >= EmployeeManager.employeeList.length) {
+                            console.log("wrong input");
+                            await this.showMenu();
+                        } else {
+                            this.showDetail(index);
+                            await this.showMenu();
+                        }
+                    }
+                    showEmployee();
+                    break;
+                case "3":
                     this.employeeList.push(new Employee("<none>", "<none>", "<none>", "<none>", "<none>"));
                     this.editEmployee(this.employeeList.length - 1);
                     break;
-                case "3":
+                case "4":
 
                     const questionEdit = () => {
                         return new Promise((resolve, reject) => {
@@ -166,7 +161,7 @@ class EmployeeManager {
                     }
                     edit();
                     break;
-                case "4":
+                case "5":
                     const questionRemove = () => {
                         return new Promise((resolve, reject) => {
                             rl.question('Enter user ID (index) to remove: ', (answer: string) => {
@@ -180,20 +175,20 @@ class EmployeeManager {
                         await questionRemove();
                         if (isNaN(index) || index < 0 || index >= EmployeeManager.employeeList.length) {
                             console.log("wrong input");
-                            this.showMenu();
+                            await this.showMenu();
                         } else {
                             this.deleteEmployee(index);
+                            console.log("Remove successfully")
+                            await this.showMenu();
                         }
-                        await this.showMenu();
                     }
                     remove();
                     break;
-                case "5":
+                case "6":
                     rl.close();
                     // this.endInput();
                     break;
             }
-            // this.showMenu();
         });
     }
 
